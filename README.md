@@ -100,12 +100,3 @@ npm run build
 
 The output will be generated in `dist/`.
 
----
-
-## ☁️ Deploying to Vercel
-
-1. Push this repository to GitHub or GitLab.
-2. Go to [Vercel](https://vercel.com) and click **"Add New Project"**.
-3. Import the repository `Guilherme-K/KSF`.
-4. Framework Preset will auto-detect as **Vite**.
-5. Click **Deploy**!
