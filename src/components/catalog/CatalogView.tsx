@@ -7,9 +7,9 @@ import {
   ShoppingCart,
   Barcode,
   Check,
-  Tag,
+  ShieldAlert,
 } from 'lucide-react';
-import { FishingItem } from '../../types';
+import { FishingItem, UserRole } from '../../types';
 import { formatCurrency } from '../../utils/discounts';
 import { BarcodeVisual } from '../common/BarcodeVisual';
 import { AddItemModal } from './AddItemModal';
@@ -18,6 +18,7 @@ import { DeleteItemDialog } from './DeleteItemDialog';
 interface CatalogViewProps {
   items: FishingItem[];
   categories: string[];
+  userRole: UserRole;
   onAddItem: (item: Omit<FishingItem, 'id' | 'createdAt'>) => void;
   onDeleteItem: (itemId: string) => void;
   onAddCategory: (categoryName: string) => void;
@@ -27,6 +28,7 @@ interface CatalogViewProps {
 export const CatalogView: React.FC<CatalogViewProps> = ({
   items,
   categories,
+  userRole,
   onAddItem,
   onDeleteItem,
   onAddCategory,
@@ -37,6 +39,8 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [itemToDelete, setItemToDelete] = useState<FishingItem | null>(null);
   const [recentlyAddedId, setRecentlyAddedId] = useState<string | null>(null);
+
+  const isManager = userRole === 'manager';
 
   // FR02: Categories listed in alphabetical order
   const sortedCategories = useMemo(() => {
@@ -102,30 +106,38 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
 
   return (
     <div className="space-y-4 sm:space-y-6 pb-20 md:pb-6">
-      {/* Top Banner & Action */}
+      {/* Top Banner & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight">
-              Catálogo de Pesca
+              Fishing Equipment Catalog
             </h1>
             <span className="px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200">
-              {items.length} itens cadastrados
+              {items.length} items registered
             </span>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Organizado em ordem alfabética por categoria e item (FR01, FR02, FR03).
+            Organized in alphabetical order by category and item name (FR01, FR02, FR03).
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setIsAddModalOpen(true)}
-          className="w-full sm:w-auto px-4 py-2.5 bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-sm shadow-teal-600/20 flex items-center justify-center gap-2 transition-all active:scale-95 min-h-[44px]"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Cadastrar Item (FR04)</span>
-        </button>
+        {/* Manager-only: Add Item (FR04) */}
+        {isManager ? (
+          <button
+            type="button"
+            onClick={() => setIsAddModalOpen(true)}
+            className="w-full sm:w-auto px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-sm shadow-indigo-600/20 flex items-center justify-center gap-2 transition-all active:scale-95 min-h-[44px]"
+            title="Manager administrative control: Add item to catalog"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Item (Manager FR04)</span>
+          </button>
+        ) : (
+          <div className="text-[11px] text-slate-500 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl flex items-center gap-1.5 self-start sm:self-auto">
+            <span>Logged as <strong>Seller</strong>: Click "+ Order" on items to create orders.</span>
+          </div>
+        )}
       </div>
 
       {/* Search Input & Horizontal Category Pills (FR02) */}
@@ -134,7 +146,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
           <input
             type="text"
-            placeholder="Buscar por nome, categoria ou código de barras..."
+            placeholder="Search catalog by name, category, or barcode..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-12 py-2.5 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-hidden bg-slate-50/50 focus:bg-white min-h-[44px]"
@@ -144,12 +156,12 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
               onClick={() => setSearchQuery('')}
               className="absolute right-3 top-3 text-xs text-slate-400 hover:text-slate-600 p-1"
             >
-              Limpar
+              Clear
             </button>
           )}
         </div>
 
-        {/* Scrollable Category Filter Chips */}
+        {/* Category Pills (FR02: Alphabetical) */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-0.5 scrollbar-thin -mx-1 px-1">
           <button
             type="button"
@@ -160,7 +172,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Todas ({items.length})
+            All Categories ({items.length})
           </button>
 
           {sortedCategories.map((cat) => {
@@ -191,15 +203,15 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
         </div>
       </div>
 
-      {/* Grouped Catalog Items */}
+      {/* Grouped Catalog Items (FR01, FR02, FR03) */}
       {groupedByCategory.length === 0 ? (
         <div className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 text-center">
           <Package className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-          <h3 className="font-semibold text-slate-800 text-sm sm:text-base">Nenhum item encontrado</h3>
+          <h3 className="font-semibold text-slate-800 text-sm sm:text-base">No items found</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             {searchQuery
-              ? `Nenhum item corresponde a "${searchQuery}". Tente outro termo.`
-              : 'Esta categoria está vazia no momento.'}
+              ? `No items match "${searchQuery}". Try another keyword.`
+              : 'This category is currently empty.'}
           </p>
         </div>
       ) : (
@@ -217,15 +229,15 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                     {group.category}
                   </h2>
                   <span className="text-[11px] sm:text-xs text-slate-400 font-medium">
-                    ({group.items.length} {group.items.length === 1 ? 'item' : 'itens'})
+                    ({group.items.length} {group.items.length === 1 ? 'item' : 'items'})
                   </span>
                 </div>
                 <span className="text-[10px] sm:text-[11px] font-mono text-slate-400 hidden sm:inline">
-                  Ordem A-Z (FR03)
+                  Alphabetical Order (FR03)
                 </span>
               </div>
 
-              {/* Items List (Responsive for Mobile & Desktop) */}
+              {/* Items List */}
               <div className="divide-y divide-slate-100">
                 {group.items.map((item) => (
                   <div
@@ -243,7 +255,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                         </span>
                         {item.stock !== undefined && (
                           <span className="text-[10px] sm:text-[11px] text-slate-400">
-                            • Estoque: {item.stock} un
+                            • Stock: {item.stock} units
                           </span>
                         )}
                       </div>
@@ -254,12 +266,12 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                       )}
                     </div>
 
-                    {/* Mobile Card Row / Desktop Inline Barcode & Price */}
+                    {/* Barcode & Price Row */}
                     <div className="flex items-center justify-between md:justify-end gap-3 sm:gap-6 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
-                      {/* Barcode Widget (FR06) */}
+                      {/* Barcode (FR06) */}
                       <div className="flex flex-col items-start md:items-center">
                         <span className="text-[9px] font-semibold uppercase text-slate-400 mb-0.5 flex items-center gap-0.5">
-                          <Barcode className="w-2.5 h-2.5 text-slate-400" /> Código (FR06)
+                          <Barcode className="w-2.5 h-2.5 text-slate-400" /> Barcode (FR06)
                         </span>
                         <BarcodeVisual value={item.barcode} height={22} className="max-w-[130px] sm:max-w-none" />
                       </div>
@@ -267,14 +279,14 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                       {/* Registered Price (FR07) */}
                       <div className="text-right min-w-[75px] sm:min-w-[90px]">
                         <span className="text-[9px] font-semibold uppercase text-slate-400 block mb-0.5">
-                          Preço (FR07)
+                          Price (FR07)
                         </span>
                         <span className="text-base sm:text-lg font-bold text-teal-700 tracking-tight">
                           {formatCurrency(item.price)}
                         </span>
                       </div>
 
-                      {/* Action Buttons: Add to Order & Delete (FR05) */}
+                      {/* Actions */}
                       <div className="flex items-center gap-1.5 shrink-0">
                         {onQuickAddToOrder && (
                           <button
@@ -285,30 +297,33 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                                 ? 'bg-emerald-600 text-white'
                                 : 'bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200'
                             }`}
-                            title="Adicionar item ao rascunho de pedido"
+                            title="Add item to order draft"
                           >
                             {recentlyAddedId === item.id ? (
                               <>
                                 <Check className="w-3.5 h-3.5" />
-                                <span>Adicionado!</span>
+                                <span>Added!</span>
                               </>
                             ) : (
                               <>
                                 <ShoppingCart className="w-3.5 h-3.5" />
-                                <span>+ Pedido</span>
+                                <span>+ Order</span>
                               </>
                             )}
                           </button>
                         )}
 
-                        <button
-                          type="button"
-                          onClick={() => setItemToDelete(item)}
-                          className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors min-h-[38px] min-w-[38px] flex items-center justify-center"
-                          title="Excluir item da categoria (FR05)"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        {/* Delete button: Only visible for Manager (FR05) */}
+                        {isManager && (
+                          <button
+                            type="button"
+                            onClick={() => setItemToDelete(item)}
+                            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors min-h-[38px] min-w-[38px] flex items-center justify-center"
+                            title="Delete item from category (Manager FR05)"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -319,7 +334,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
         </div>
       )}
 
-      {/* Add Item Modal (FR04) */}
+      {/* Add Item Modal (Manager FR04) */}
       <AddItemModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
@@ -328,7 +343,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
         onAddCategory={onAddCategory}
       />
 
-      {/* Delete Item Confirmation Dialog (FR05) */}
+      {/* Delete Item Confirmation Dialog (Manager FR05) */}
       <DeleteItemDialog
         isOpen={Boolean(itemToDelete)}
         item={itemToDelete}

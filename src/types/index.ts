@@ -10,22 +10,14 @@ export interface FishingItem {
   createdAt: string;
 }
 
-export interface OrderDiscount {
-  id: string;
-  percentage: number; // e.g. 10 for 10%
-  label?: string; // e.g. "Cash Discount", "Bulk Promo"
-}
-
 export interface OrderItem {
   itemId: string;
   name: string;
   category: string;
   barcode: string;
-  unitPrice: number; // base price from item registration
-  quantity: number;
-  discounts: number[]; // e.g. [10, 10] compound discounts
-  finalUnitPrice: number; // price after compound discounts
-  totalPrice: number; // quantity * finalUnitPrice
+  unitPrice: number; // base price from item registration (FR11)
+  quantity: number; // quantity added (FR10)
+  totalPrice: number; // quantity * unitPrice (FR13 / FR15)
 }
 
 export type OrderStatus = 'Pending' | 'Order registered';
@@ -33,14 +25,13 @@ export type OrderStatus = 'Pending' | 'Order registered';
 export interface Order {
   id: string;
   orderNumber: string; // e.g. "ORD-2026-001"
-  customerName: string; // e.g. "Fishing Store"
+  customerName: string; // e.g. "Fishing Store" (FR09)
   items: OrderItem[];
-  subtotal: number; // sum before discounts
-  totalDiscountAmount: number;
-  totalPrice: number;
+  subtotal: number;
+  totalPrice: number; // sum of item totals (FR14 / FR16)
   status: OrderStatus;
   createdAt: string; // ISO date string
-  registeredAt?: string; // when it reached computer / registered
+  registeredAt?: string; // when received by computer (FR17 / FR19)
   createdBy: 'seller' | 'manager';
   notes?: string;
 }

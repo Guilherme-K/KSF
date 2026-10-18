@@ -2,11 +2,11 @@ import { FishingItem, Order, UserRole } from '../types';
 import { INITIAL_CATEGORIES, INITIAL_ITEMS, INITIAL_ORDERS } from '../data/initialData';
 
 const KEYS = {
-  ITEMS: 'fishing_crm_items_v1',
-  CATEGORIES: 'fishing_crm_categories_v1',
-  ORDERS: 'fishing_crm_orders_v1',
-  USER_ROLE: 'fishing_crm_user_role_v1',
-  SIMULATED_OFFLINE: 'fishing_crm_sim_offline_v1',
+  ITEMS: 'fishing_crm_items_v2',
+  CATEGORIES: 'fishing_crm_categories_v2',
+  ORDERS: 'fishing_crm_orders_v2',
+  USER_ROLE: 'fishing_crm_user_role_v2',
+  SIMULATED_OFFLINE: 'fishing_crm_sim_offline_v2',
 };
 
 // Broadcast channel for multi-tab live sync
@@ -145,8 +145,7 @@ export function saveSimulatedOffline(isOffline: boolean) {
 }
 
 /**
- * Synchronize any pending orders to 'Order registered'
- * Requirement FR19: When internet is back, the pending order is sent and its status changes to "Order registered"
+ * Synchronize any pending orders to 'Order registered' (FR19)
  */
 export function syncPendingOrders(): { count: number; updatedOrders: Order[] } {
   const orders = loadOrders();

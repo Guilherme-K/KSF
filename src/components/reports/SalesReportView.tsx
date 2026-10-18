@@ -106,7 +106,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
       totalSalesCount > 0 ? Math.round((totalRevenue / totalSalesCount) * 100) / 100 : 0;
 
     return {
-      periodLabel: `${formatShortDate(startDate)} até ${formatShortDate(endDate)}`,
+      periodLabel: `${formatShortDate(startDate)} to ${formatShortDate(endDate)}`,
       startDate,
       endDate,
       totalSalesCount,
@@ -142,14 +142,14 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
         <div>
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight">
-              Relatório de Vendas
+              Manager Sales Reports
             </h1>
             <span className="px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
-              Terminal do Gerente (FR20)
+              Computer Terminal (FR20)
             </span>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Geração de relatórios por período com faturamento e exportação em PDF (FR20, FR21, FR22).
+            Generate period-based sales analytics, revenue figures, and export audit PDFs (FR20, FR21, FR22).
           </p>
         </div>
 
@@ -159,7 +159,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
           className="w-full sm:w-auto px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 min-h-[44px]"
         >
           <Download className="w-4 h-4" />
-          <span>Exportar Relatório em PDF</span>
+          <span>Export Report to PDF</span>
         </button>
       </div>
 
@@ -168,10 +168,10 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
             <Calendar className="w-4 h-4 text-indigo-600" />
-            <span>Período do Relatório (FR21: Ex. a partir de 10/07)</span>
+            <span>Choose Time Period for Report (FR21: e.g. starting on 07/10)</span>
           </label>
           <span className="text-[11px] text-slate-400">
-            FR22: Mostra vendas do período mesmo gerado posteriormente
+            FR22: Shows sales made in period even if generated later
           </span>
         </div>
 
@@ -179,7 +179,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div>
             <label className="block text-[11px] font-semibold text-slate-500 mb-1">
-              Data Inicial *
+              Start Date (e.g. 07/10) *
             </label>
             <input
               type="date"
@@ -194,7 +194,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
 
           <div>
             <label className="block text-[11px] font-semibold text-slate-500 mb-1">
-              Data Final *
+              End Date *
             </label>
             <input
               type="date"
@@ -209,7 +209,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
 
           <div className="sm:col-span-2 flex flex-col justify-end">
             <div className="flex flex-wrap items-center gap-1.5 pt-1 sm:pt-0">
-              <span className="text-[11px] text-slate-400 mr-1">Atalhos:</span>
+              <span className="text-[11px] text-slate-400 mr-1">Period Presets:</span>
               <button
                 type="button"
                 onClick={() => handleApplyPreset('07-10-demo')}
@@ -218,9 +218,9 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
                     ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
                     : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border-indigo-200'
                 }`}
-                title="Carrega o período a partir de 10/07 como solicitado no FR21"
+                title="Loads sample period starting on 07/10 as requested in FR21"
               >
-                ★ A partir de 10/07 (FR21)
+                ★ Starting 07/10 (FR21 Demo)
               </button>
 
               <button
@@ -232,7 +232,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
                     : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
                 }`}
               >
-                10/07 a 17/07
+                07/10 to 07/17
               </button>
 
               <button
@@ -244,7 +244,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
                     : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
                 }`}
               >
-                Todo Histórico
+                All Records
               </button>
             </div>
           </div>
@@ -256,7 +256,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
         {/* Total Sales Count */}
         <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
           <div className="flex items-center justify-between text-slate-400 mb-1 sm:mb-2">
-            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider">Vendas (FR22)</span>
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider">Total Sales (FR22)</span>
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
               <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
@@ -265,14 +265,14 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
             {summary.totalSalesCount}
           </div>
           <span className="text-[10px] sm:text-xs text-slate-500 mt-0.5 block">
-            Pedidos no período
+            Orders made in chosen period
           </span>
         </div>
 
         {/* Total Revenue */}
         <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
           <div className="flex items-center justify-between text-slate-400 mb-1 sm:mb-2">
-            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider">Faturamento</span>
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider">Total Revenue</span>
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
               <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
@@ -281,14 +281,14 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
             {formatCurrency(summary.totalRevenue)}
           </div>
           <span className="text-[10px] sm:text-xs text-teal-600/80 mt-0.5 block font-medium">
-            Receita líquida
+            Net commercial volume
           </span>
         </div>
 
         {/* Avg Ticket */}
         <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
           <div className="flex items-center justify-between text-slate-400 mb-1 sm:mb-2">
-            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider">Ticket Médio</span>
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider">Avg Order Value</span>
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
               <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
@@ -297,14 +297,14 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
             {formatCurrency(summary.averageOrderValue)}
           </div>
           <span className="text-[10px] sm:text-xs text-slate-500 mt-0.5 block">
-            Média por pedido
+            Average ticket per order
           </span>
         </div>
 
         {/* Registered vs Pending */}
         <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
           <div className="flex items-center justify-between text-slate-400 mb-1 sm:mb-2">
-            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider">Sincronização</span>
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider">Registration Status</span>
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
@@ -315,7 +315,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
             <span className="text-amber-600">{summary.pendingCount} Pend</span>
           </div>
           <span className="text-[10px] sm:text-xs text-slate-500 mt-0.5 block">
-            No computador
+            Registered on computer
           </span>
         </div>
       </div>
@@ -327,13 +327,13 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
               <Layers className="w-4 h-4 text-teal-600" />
-              <span>Receita por Categoria de Pesca</span>
+              <span>Revenue by Fishing Category</span>
             </h3>
-            <span className="text-xs text-slate-400">{summary.categoryBreakdown.length} categorias</span>
+            <span className="text-xs text-slate-400">{summary.categoryBreakdown.length} categories</span>
           </div>
 
           {summary.categoryBreakdown.length === 0 ? (
-            <p className="text-xs text-slate-400 italic py-4">Sem vendas no período.</p>
+            <p className="text-xs text-slate-400 italic py-4">No category sales in this period.</p>
           ) : (
             <div className="space-y-3 pt-1">
               {summary.categoryBreakdown.map((cat) => {
@@ -347,7 +347,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
                     <div className="flex justify-between text-xs font-semibold">
                       <span className="text-slate-800">{cat.category}</span>
                       <span className="text-slate-600">
-                        {formatCurrency(cat.totalRevenue)} ({percent}%) • {cat.quantitySold} un
+                        {formatCurrency(cat.totalRevenue)} ({percent}%) • {cat.quantitySold} units
                       </span>
                     </div>
                     <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -368,13 +368,13 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
               <Users className="w-4 h-4 text-indigo-600" />
-              <span>Vendas por Loja / Cliente</span>
+              <span>Sales Volume by Store / Customer</span>
             </h3>
-            <span className="text-xs text-slate-400">{summary.customerBreakdown.length} clientes</span>
+            <span className="text-xs text-slate-400">{summary.customerBreakdown.length} stores</span>
           </div>
 
           {summary.customerBreakdown.length === 0 ? (
-            <p className="text-xs text-slate-400 italic py-4">Sem vendas no período.</p>
+            <p className="text-xs text-slate-400 italic py-4">No customer sales in this period.</p>
           ) : (
             <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden">
               {summary.customerBreakdown.map((cust, idx) => (
@@ -393,7 +393,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
                       {formatCurrency(cust.totalSpent)}
                     </span>
                     <span className="text-[10px] text-slate-400">
-                      {cust.orderCount} {cust.orderCount === 1 ? 'pedido' : 'pedidos'}
+                      {cust.orderCount} {cust.orderCount === 1 ? 'order' : 'orders'}
                     </span>
                   </div>
                 </div>
@@ -408,25 +408,25 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
         <div className="bg-slate-50 px-4 sm:px-6 py-3 border-b border-slate-200 flex items-center justify-between">
           <h3 className="font-bold text-slate-800 text-xs sm:text-base flex items-center gap-2">
             <Package className="w-4 h-4 text-teal-600" />
-            <span>Equipamentos Mais Vendidos no Período</span>
+            <span>Best Selling Fishing Gear in Period</span>
           </h3>
-          <span className="text-[11px] text-slate-400">Classificados por volume</span>
+          <span className="text-[11px] text-slate-400">Ranked by units sold & revenue</span>
         </div>
 
         {summary.topItems.length === 0 ? (
           <div className="p-8 text-center text-slate-400 text-xs">
-            Nenhum item vendido no período selecionado.
+            No items were sold during the selected period.
           </div>
         ) : (
           <div className="overflow-x-auto scrollbar-thin">
             <table className="w-full text-left text-xs min-w-[500px]">
               <thead className="bg-slate-100/70 text-slate-600 font-semibold uppercase tracking-wider text-[10px]">
                 <tr>
-                  <th className="py-2.5 px-4">Item</th>
-                  <th className="py-2.5 px-4">Categoria</th>
-                  <th className="py-2.5 px-4">Código</th>
-                  <th className="py-2.5 px-4 text-center">Unidades</th>
-                  <th className="py-2.5 px-4 text-right">Faturamento</th>
+                  <th className="py-2.5 px-4">Item Name</th>
+                  <th className="py-2.5 px-4">Category</th>
+                  <th className="py-2.5 px-4">Barcode</th>
+                  <th className="py-2.5 px-4 text-center">Units Sold</th>
+                  <th className="py-2.5 px-4 text-right">Revenue</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -457,7 +457,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="bg-slate-50 px-4 sm:px-6 py-3 border-b border-slate-200 flex items-center justify-between">
           <h3 className="font-bold text-slate-800 text-xs sm:text-base">
-            Lista de Pedidos no Período ({summary.orders.length})
+            Detailed Orders in Period ({summary.orders.length})
           </h3>
           <span className="text-[11px] text-slate-400">
             {formatShortDate(startDate)} → {formatShortDate(endDate)}
@@ -466,7 +466,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
 
         {summary.orders.length === 0 ? (
           <div className="p-8 text-center text-slate-400 text-xs">
-            Nenhum pedido encontrado neste intervalo de datas.
+            No orders found within this date range.
           </div>
         ) : (
           <div className="divide-y divide-slate-100">
@@ -490,7 +490,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
                     </span>
                   </div>
                   <div className="text-slate-600 mt-0.5">
-                    Cliente: <strong>{ord.customerName}</strong> ({ord.items.length} itens)
+                    Customer: <strong>{ord.customerName}</strong> ({ord.items.length} items)
                   </div>
                 </div>
 

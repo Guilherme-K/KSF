@@ -58,21 +58,21 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ order, onClo
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 text-xs">
             <div>
               <span className="text-slate-400 block mb-0.5 flex items-center gap-1">
-                <Calendar className="w-3 h-3" /> Data:
+                <Calendar className="w-3 h-3" /> Date Placed:
               </span>
               <span className="font-semibold text-slate-800">{formatDate(order.createdAt)}</span>
             </div>
             {order.registeredAt && (
               <div>
                 <span className="text-slate-400 block mb-0.5 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-500" /> Registrado:
+                  <CheckCircle2 className="w-3 h-3 text-emerald-500" /> Registered:
                 </span>
                 <span className="font-semibold text-slate-800">{formatDate(order.registeredAt)}</span>
               </div>
             )}
             <div className="col-span-2 sm:col-span-1">
               <span className="text-slate-400 block mb-0.5 flex items-center gap-1">
-                <User className="w-3 h-3" /> Cliente:
+                <User className="w-3 h-3" /> Customer:
               </span>
               <span className="font-bold text-slate-900 truncate block">{order.customerName}</span>
             </div>
@@ -80,7 +80,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ order, onClo
 
           {order.notes && (
             <div className="p-3 bg-amber-50/60 border border-amber-200/70 rounded-xl text-xs text-amber-900">
-              <span className="font-bold">Observações: </span>
+              <span className="font-bold">Notes: </span>
               {order.notes}
             </div>
           )}
@@ -88,7 +88,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ order, onClo
           {/* Items Table */}
           <div>
             <h4 className="font-bold text-slate-800 text-xs sm:text-sm mb-2">
-              Itens do Pedido ({order.items.length})
+              Order Items ({order.items.length})
             </h4>
 
             <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100">
@@ -104,27 +104,15 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ order, onClo
 
                     <div className="flex items-center gap-2 mt-1 text-slate-500 flex-wrap">
                       <span className="font-mono text-[10px] bg-slate-100 px-1 rounded">
-                        Cód: {item.barcode}
+                        Barcode: {item.barcode}
                       </span>
                       <span>Unit: {formatCurrency(item.unitPrice)}</span>
-                      <span>Qtd: <strong>{item.quantity}</strong></span>
+                      <span>Qty: <strong>{item.quantity}</strong></span>
                     </div>
-
-                    {item.discounts && item.discounts.length > 0 && (
-                      <div className="mt-1 flex items-center gap-1.5 text-rose-700 font-semibold text-[10px] sm:text-[11px] flex-wrap">
-                        <span>Descontos:</span>
-                        {item.discounts.map((d, dIdx) => (
-                          <span key={dIdx} className="bg-rose-50 border border-rose-200 px-1 py-0.2 rounded">
-                            -{d}%
-                          </span>
-                        ))}
-                        <span className="text-slate-400">→ Unit: {formatCurrency(item.finalUnitPrice)}</span>
-                      </div>
-                    )}
                   </div>
 
                   <div className="text-right sm:shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-100 flex items-center justify-between sm:block">
-                    <span className="text-[10px] text-slate-400 sm:block">Total do Item</span>
+                    <span className="text-[10px] text-slate-400 sm:block">Item Total</span>
                     <span className="font-bold text-xs sm:text-sm text-teal-700">
                       {formatCurrency(item.totalPrice)}
                     </span>
@@ -136,20 +124,8 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ order, onClo
 
           {/* Totals Summary */}
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 sm:p-4 space-y-1.5 text-xs">
-            <div className="flex justify-between text-slate-600">
-              <span>Subtotal Bruto:</span>
-              <span className="font-semibold text-slate-800">{formatCurrency(order.subtotal)}</span>
-            </div>
-
-            {order.totalDiscountAmount > 0 && (
-              <div className="flex justify-between text-rose-600 font-medium">
-                <span>Descontos Compostos Economizados:</span>
-                <span>-{formatCurrency(order.totalDiscountAmount)}</span>
-              </div>
-            )}
-
-            <div className="flex justify-between items-center pt-2 border-t border-slate-200 text-xs sm:text-sm font-bold text-slate-900">
-              <span>Total do Pedido (FR16):</span>
+            <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-900">
+              <span>Order Total (FR14 / FR16):</span>
               <span className="text-base sm:text-lg text-teal-700">{formatCurrency(order.totalPrice)}</span>
             </div>
           </div>
@@ -158,14 +134,14 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ order, onClo
         {/* Footer */}
         <div className="bg-slate-50 px-4 sm:px-6 py-3 border-t border-slate-200 flex items-center justify-between shrink-0">
           <span className="text-[11px] text-slate-500 hidden sm:inline">
-            Clique em Baixar PDF para obter a via impressa (FR18)
+            Click Download PDF to export printable commercial document (FR18)
           </span>
           <button
             type="button"
             onClick={onClose}
             className="w-full sm:w-auto px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-200 bg-slate-100 rounded-xl transition-colors min-h-[38px]"
           >
-            Fechar
+            Close
           </button>
         </div>
       </div>

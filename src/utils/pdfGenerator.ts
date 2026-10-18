@@ -4,7 +4,7 @@ import { Order, SalesReportSummary } from '../types';
 import { formatCurrency, formatDate, formatShortDate } from './discounts';
 
 /**
- * Generates and downloads a PDF invoice / order receipt (FR18)
+ * Generates and downloads a clean PDF invoice / order receipt (FR18)
  */
 export function generateOrderPDF(order: Order) {
   const doc = new jsPDF({
@@ -14,7 +14,7 @@ export function generateOrderPDF(order: Order) {
 
   const pageWidth = doc.internal.pageSize.getWidth();
 
-  // Primary Header Banner
+  // Header Banner
   doc.setFillColor(15, 23, 42); // slate-900
   doc.rect(0, 0, pageWidth, 28, 'F');
 
@@ -27,10 +27,10 @@ export function generateOrderPDF(order: Order) {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor(148, 163, 184); // slate-400
-  doc.text('Commercial Order Specification & Dispatch Document', 14, 21);
+  doc.text('Commercial Sales Order & Dispatch Document', 14, 21);
 
   // Status Badge in Header
-  const statusColor = order.status === 'Order registered' ? [16, 185, 129] : [245, 158, 11]; // green or amber
+  const statusColor = order.status === 'Order registered' ? [16, 185, 129] : [245, 158, 11];
   doc.setFillColor(statusColor[0], statusColor[1], statusColor[2]);
   doc.roundedRect(pageWidth - 55, 9, 41, 10, 2, 2, 'F');
   doc.setFont('helvetica', 'bold');
@@ -39,7 +39,7 @@ export function generateOrderPDF(order: Order) {
   doc.text(order.status.toUpperCase(), pageWidth - 34.5, 15.5, { align: 'center' });
 
   // Metadata Grid
-  doc.setTextColor(30, 41, 59); // slate-800
+  doc.setTextColor(30, 41, 59);
   doc.setFontSize(10);
 
   // Column 1: Order Details
@@ -52,18 +52,18 @@ export function generateOrderPDF(order: Order) {
   if (order.registeredAt) {
     doc.text(`Registered At: ${formatDate(order.registeredAt)}`, 14, 54);
   }
-  doc.text(`Created By: Seller Field Terminal`, 14, order.registeredAt ? 59 : 54);
+  doc.text(`Dispatched By: Seller Terminal`, 14, order.registeredAt ? 59 : 54);
 
-  // Column 2: Customer Details (FR09: customer name)
+  // Column 2: Customer Details (FR09)
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
   doc.text('CUSTOMER / STORE INFORMATION', 110, 38);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.text(`Customer Name: ${order.customerName}`, 110, 44);
-  doc.text(`Destination: Fishing Retail / Storefront`, 110, 49);
+  doc.text(`Account Type: Fishing Retail Storefront`, 110, 49);
   if (order.notes) {
-    doc.text(`Order Notes: ${order.notes}`, 110, 54);
+    doc.text(`Notes: ${order.notes}`, 110, 54);
   }
 
   // Divider Line
@@ -71,61 +71,41 @@ export function generateOrderPDF(order: Order) {
   doc.setLineWidth(0.4);
   doc.line(14, 64, pageWidth - 14, 64);
 
-  // Table of Items (FR10, FR11, FR12, FR13, FR14, FR15)
-  const tableRows = order.items.map((item, idx) => {
-    let discountStr = 'None';
-    if (item.discounts && item.discounts.length > 0) {
-      discountStr = item.discounts.map((d) => `-${d}%`).join(' -> ');
-    }
-
-    return [
-      String(idx + 1),
-      `${item.name}\n[${item.category}]`,
-      item.barcode,
-      String(item.quantity),
-      formatCurrency(item.unitPrice),
-      discountStr,
-      formatCurrency(item.finalUnitPrice),
-      formatCurrency(item.totalPrice),
-    ];
-  });
+  // Table of Items (FR10, FR11, FR12, FR13)
+  const tableRows = order.items.map((item, idx) => [
+    String(idx + 1),
+    item.name,
+    item.category,
+    item.barcode,
+    String(item.quantity),
+    formatCurrency(item.unitPrice),
+    formatCurrency(item.totalPrice),
+  ]);
 
   autoTable(doc, {
     startY: 68,
-    head: [
-      [
-        '#',
-        'Item Description',
-        'Barcode',
-        'Qty',
-        'Unit Price',
-        'Compound Discounts',
-        'Final Unit',
-        'Item Total',
-      ],
-    ],
+    head: [['#', 'Item Name', 'Category', 'Barcode', 'Qty', 'Unit Price', 'Total']],
     body: tableRows,
     theme: 'grid',
     headStyles: {
       fillColor: [30, 41, 59],
       textColor: [255, 255, 255],
-      fontSize: 8,
+      fontSize: 8.5,
       fontStyle: 'bold',
       halign: 'left',
     },
     columnStyles: {
       0: { cellWidth: 8, halign: 'center' },
-      1: { cellWidth: 48 },
-      2: { cellWidth: 30, font: 'courier', fontSize: 7.5 },
-      3: { cellWidth: 12, halign: 'center' },
-      4: { cellWidth: 20, halign: 'right' },
-      5: { cellWidth: 26, halign: 'center', textColor: [220, 38, 38] },
-      6: { cellWidth: 20, halign: 'right' },
-      7: { cellWidth: 22, halign: 'right', fontStyle: 'bold' },
+      1: { cellWidth: 55, fontStyle: 'bold' },
+      2: { cellWidth: 28 },
+      3: { cellWidth: 32, font: 'courier', fontSize: 7.5 },
+      4: { cellWidth: 14, halign: 'center' },
+      5: { cellWidth: 24, halign: 'right' },
+      6: { cellWidth: 25, halign: 'right', fontStyle: 'bold' },
     },
     styles: {
       fontSize: 8,
-      cellPadding: 2.5,
+      cellPadding: 2.8,
       textColor: [15, 23, 42],
     },
     alternateRowStyles: {
@@ -133,7 +113,6 @@ export function generateOrderPDF(order: Order) {
     },
   });
 
-  // Calculate final Y position after table
   const lastTable = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable;
   let finalY = lastTable ? lastTable.finalY + 8 : 170;
 
@@ -142,37 +121,33 @@ export function generateOrderPDF(order: Order) {
     finalY = 20;
   }
 
-  // Summary Totals Box (FR16)
-  const totalsBoxX = pageWidth - 90;
+  // Summary Totals Box (FR14 / FR16)
+  const totalsBoxX = pageWidth - 80;
   doc.setFillColor(248, 250, 252);
   doc.setDrawColor(226, 232, 240);
-  doc.roundedRect(totalsBoxX, finalY, 76, 32, 2, 2, 'FD');
+  doc.roundedRect(totalsBoxX, finalY, 66, 24, 2, 2, 'FD');
+
+  const totalQuantity = order.items.reduce((acc, it) => acc + it.quantity, 0);
 
   doc.setFontSize(8.5);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(100, 116, 139);
-  doc.text('Subtotal (Gross):', totalsBoxX + 4, finalY + 7);
+  doc.text(`Total Units (${totalQuantity}):`, totalsBoxX + 4, finalY + 7);
   doc.setTextColor(15, 23, 42);
-  doc.text(formatCurrency(order.subtotal), totalsBoxX + 72, finalY + 7, { align: 'right' });
-
-  doc.setTextColor(220, 38, 38);
-  doc.text('Total Discounts Savings:', totalsBoxX + 4, finalY + 14);
-  doc.text(`-${formatCurrency(order.totalDiscountAmount)}`, totalsBoxX + 72, finalY + 14, {
-    align: 'right',
-  });
+  doc.text(`${totalQuantity} items`, totalsBoxX + 62, finalY + 7, { align: 'right' });
 
   doc.setDrawColor(203, 213, 225);
-  doc.line(totalsBoxX + 4, finalY + 18, totalsBoxX + 72, finalY + 18);
+  doc.line(totalsBoxX + 4, finalY + 11, totalsBoxX + 62, finalY + 11);
 
-  doc.setFontSize(10.5);
+  doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(15, 23, 42);
-  doc.text('Order Total:', totalsBoxX + 4, finalY + 26);
+  doc.text('Order Total:', totalsBoxX + 4, finalY + 19);
   doc.setTextColor(13, 148, 136); // teal-600
-  doc.text(formatCurrency(order.totalPrice), totalsBoxX + 72, finalY + 26, { align: 'right' });
+  doc.text(formatCurrency(order.totalPrice), totalsBoxX + 62, finalY + 19, { align: 'right' });
 
-  // Signatures section
-  const signY = finalY + 44;
+  // Signatures
+  const signY = finalY + 36;
   if (signY < 275) {
     doc.setDrawColor(148, 163, 184);
     doc.line(14, signY, 70, signY);
@@ -188,10 +163,9 @@ export function generateOrderPDF(order: Order) {
   // Footer
   doc.setFontSize(7);
   doc.setTextColor(148, 163, 184);
-  doc.text('Generated by AquaTackle Fishing CRM System • Synchronized Terminal', 14, 287);
+  doc.text('AquaTackle CRM System • Commercial Order Receipt (FR18)', 14, 287);
   doc.text(`Page 1 of 1`, pageWidth - 14, 287, { align: 'right' });
 
-  // Save PDF file
   const filename = `${order.customerName.replace(/[^a-zA-Z0-9]/g, '_')}_${order.orderNumber}.pdf`;
   doc.save(filename);
 }
@@ -219,7 +193,7 @@ export function generateSalesReportPDF(summary: SalesReportSummary) {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.5);
   doc.setTextColor(148, 163, 184);
-  doc.text(`Computer Management Terminal • Generated on ${formatDate(new Date().toISOString())}`, 14, 20);
+  doc.text(`Manager Computer Terminal • Generated on ${formatDate(new Date().toISOString())}`, 14, 20);
 
   // Period Badge
   doc.setFontSize(9);

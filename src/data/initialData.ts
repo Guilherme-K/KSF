@@ -112,7 +112,7 @@ export const INITIAL_ITEMS: FishingItem[] = [
     category: 'Lures',
     barcode: '7893003004025',
     price: 12.00,
-    description: 'Holographic suspending minnow lure for predatory bass and peacock bass.',
+    description: 'Holographic suspending minnow lure for predatory bass and game fish.',
     stock: 60,
     createdAt: '2026-06-02T10:00:00Z',
   },
@@ -122,7 +122,7 @@ export const INITIAL_ITEMS: FishingItem[] = [
     category: 'Lures',
     barcode: '7893003004032',
     price: 9.80,
-    description: 'Weedless hollow body surface frog for thick cover.',
+    description: 'Weedless hollow body surface frog for heavy vegetation.',
     stock: 70,
     createdAt: '2026-06-03T10:00:00Z',
   },
@@ -234,7 +234,7 @@ export const INITIAL_ITEMS: FishingItem[] = [
   },
 ];
 
-// Helper to construct sample orders with compound discounts
+// Helper to construct sample orders
 function createSampleOrder(
   id: string,
   orderNumber: string,
@@ -242,13 +242,12 @@ function createSampleOrder(
   itemsConfig: Array<{
     item: FishingItem;
     quantity: number;
-    discounts: number[];
   }>,
   createdAt: string,
   status: 'Pending' | 'Order registered' = 'Order registered',
   notes?: string
 ): Order {
-  const items = itemsConfig.map(({ item, quantity, discounts }) =>
+  const items = itemsConfig.map(({ item, quantity }) =>
     buildOrderItem(
       {
         itemId: item.id,
@@ -257,8 +256,7 @@ function createSampleOrder(
         barcode: item.barcode,
         price: item.price,
       },
-      quantity,
-      discounts
+      quantity
     )
   );
 
@@ -270,7 +268,6 @@ function createSampleOrder(
     customerName,
     items,
     subtotal: totals.subtotal,
-    totalDiscountAmount: totals.totalDiscountAmount,
     totalPrice: totals.totalPrice,
     status,
     createdAt,
@@ -281,54 +278,54 @@ function createSampleOrder(
 }
 
 export const INITIAL_ORDERS: Order[] = [
-  // Orders placed on 2026-07-10 (as cited in requirement FR21: "e.g. starting on 07/10")
+  // Orders placed on 2026-07-10 (FR21: starting on 07/10)
   createSampleOrder(
     'ord-001',
     'ORD-2026-0710-01',
     'Fishing Store',
     [
-      { item: INITIAL_ITEMS[0], quantity: 3, discounts: [10, 5] }, // APA Rod with 10% + 5% compound discount
-      { item: INITIAL_ITEMS[4], quantity: 2, discounts: [10] }, // Apex Reel with 10% discount
-      { item: INITIAL_ITEMS[12], quantity: 5, discounts: [] }, // Braided Line without discount
+      { item: INITIAL_ITEMS[0], quantity: 3 }, // APA Rod
+      { item: INITIAL_ITEMS[4], quantity: 2 }, // Apex Reel
+      { item: INITIAL_ITEMS[12], quantity: 5 }, // Braided Line
     ],
     '2026-07-10T09:30:00Z',
     'Order registered',
-    'Delivered to main harbor branch'
+    'Delivered to main harbor store'
   ),
   createSampleOrder(
     'ord-002',
     'ORD-2026-0710-02',
     'Ocean Baits & Tackle',
     [
-      { item: INITIAL_ITEMS[8], quantity: 15, discounts: [15] }, // Crankbaits with 15% discount
-      { item: INITIAL_ITEMS[9], quantity: 10, discounts: [10, 10] }, // Minnow Jerkbait with compound 10% + 10%
-      { item: INITIAL_ITEMS[15], quantity: 20, discounts: [5] }, // Circle hooks
+      { item: INITIAL_ITEMS[8], quantity: 15 }, // Crankbaits
+      { item: INITIAL_ITEMS[9], quantity: 10 }, // Minnow Jerkbait
+      { item: INITIAL_ITEMS[15], quantity: 20 }, // Circle hooks
     ],
     '2026-07-10T14:15:00Z',
     'Order registered'
   ),
 
-  // Orders placed on 2026-07-11 (as cited in requirement FR22: "e.g. generated on 07/11")
+  // Orders placed on 2026-07-11 (FR22: generated on 07/11)
   createSampleOrder(
     'ord-003',
     'ORD-2026-0711-01',
     'Fishing Store',
     [
-      { item: INITIAL_ITEMS[1], quantity: 2, discounts: [10] }, // Carbon Master Rod
-      { item: INITIAL_ITEMS[5], quantity: 2, discounts: [10, 5] }, // Oceanic Spinning Reel
-      { item: INITIAL_ITEMS[19], quantity: 2, discounts: [] }, // Tackle Box
+      { item: INITIAL_ITEMS[1], quantity: 2 }, // Carbon Master Rod
+      { item: INITIAL_ITEMS[5], quantity: 2 }, // Oceanic Spinning Reel
+      { item: INITIAL_ITEMS[19], quantity: 2 }, // Tackle Box
     ],
     '2026-07-11T11:00:00Z',
     'Order registered',
-    'Repeat customer order'
+    'Repeat storefront customer'
   ),
   createSampleOrder(
     'ord-004',
     'ORD-2026-0711-02',
     'Rio & Mar Outfitters',
     [
-      { item: INITIAL_ITEMS[0], quantity: 4, discounts: [12] }, // APA Rod
-      { item: INITIAL_ITEMS[13], quantity: 6, discounts: [5] }, // Fluorocarbon Leader
+      { item: INITIAL_ITEMS[0], quantity: 4 }, // APA Rod
+      { item: INITIAL_ITEMS[13], quantity: 6 }, // Fluorocarbon Leader
     ],
     '2026-07-11T16:45:00Z',
     'Order registered'
@@ -340,25 +337,25 @@ export const INITIAL_ORDERS: Order[] = [
     'ORD-2026-0715-01',
     'Lagoon Anglers Club',
     [
-      { item: INITIAL_ITEMS[6], quantity: 1, discounts: [8] }, // Titan Reel
-      { item: INITIAL_ITEMS[2], quantity: 2, discounts: [10] }, // Surf Rod
-      { item: INITIAL_ITEMS[18], quantity: 3, discounts: [] }, // Fillet Knife
+      { item: INITIAL_ITEMS[6], quantity: 1 }, // Titan Reel
+      { item: INITIAL_ITEMS[2], quantity: 2 }, // Surf Rod
+      { item: INITIAL_ITEMS[18], quantity: 3 }, // Fillet Knife
     ],
     '2026-07-15T10:20:00Z',
     'Order registered'
   ),
 
-  // Recent / Today's order - demonstrative Pending order (FR16/FR18)
+  // Demonstrative Pending order (FR16/FR18)
   createSampleOrder(
     'ord-006',
     'ORD-2026-0718-01',
     'Fishing Store',
     [
-      { item: INITIAL_ITEMS[0], quantity: 2, discounts: [10, 10] }, // APA Rod with 10% -> 10% compound
-      { item: INITIAL_ITEMS[10], quantity: 5, discounts: [5] }, // Topwater Frogs
+      { item: INITIAL_ITEMS[0], quantity: 2 }, // APA Rod
+      { item: INITIAL_ITEMS[10], quantity: 5 }, // Topwater Frogs
     ],
     '2026-07-18T13:10:00Z',
     'Pending',
-    'Drafted in remote area with weak cellular signal'
+    'Drafted offline in remote marina dock'
   ),
 ];

@@ -41,14 +41,14 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
     setError('');
 
     if (!name.trim()) {
-      setError('Por favor insira o nome do item.');
+      setError('Please enter item name.');
       return;
     }
 
     let finalCategory = category;
     if (isCreatingNewCategory) {
       if (!newCategoryName.trim()) {
-        setError('Por favor insira o nome da nova categoria.');
+        setError('Please enter a new category name.');
         return;
       }
       finalCategory = newCategoryName.trim();
@@ -56,18 +56,18 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
     }
 
     if (!finalCategory) {
-      setError('Selecione ou crie uma categoria.');
+      setError('Please select or create a category.');
       return;
     }
 
     if (!barcode.trim()) {
-      setError('Todo item deve ter um código de barras registrado (FR06).');
+      setError('Every item must have a registered barcode (FR06).');
       return;
     }
 
     const numericPrice = parseFloat(price);
     if (isNaN(numericPrice) || numericPrice <= 0) {
-      setError('Insira um preço válido (FR07).');
+      setError('Please enter a valid price (FR07).');
       return;
     }
 
@@ -99,8 +99,8 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
               <Plus className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-semibold text-sm sm:text-base">Cadastrar Item no Catálogo</h3>
-              <p className="text-[10px] sm:text-xs text-slate-400">Requisitos: FR04, FR06 (Código) e FR07 (Preço)</p>
+              <h3 className="font-semibold text-sm sm:text-base">Add Item to Catalog</h3>
+              <p className="text-[10px] sm:text-xs text-slate-400">Requirements: FR04, FR06 (Barcode) & FR07 (Price)</p>
             </div>
           </div>
           <button
@@ -123,12 +123,12 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
           {/* Item Name */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-              Nome do Equipamento *
+              Equipment Name *
             </label>
             <input
               type="text"
               required
-              placeholder="Ex: Vara Carbon Master, Carretilha Apex..."
+              placeholder="e.g. Carbon Master Rod, Apex Reel..."
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-hidden min-h-[42px]"
@@ -139,21 +139,21 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                Categoria *
+                Category *
               </label>
               <button
                 type="button"
                 onClick={() => setIsCreatingNewCategory(!isCreatingNewCategory)}
                 className="text-xs text-teal-600 hover:text-teal-700 font-semibold"
               >
-                {isCreatingNewCategory ? '← Escolher Existente' : '+ Nova Categoria'}
+                {isCreatingNewCategory ? '← Choose Existing' : '+ New Category'}
               </button>
             </div>
 
             {isCreatingNewCategory ? (
               <input
                 type="text"
-                placeholder="Ex: Iscas Artificiais, Barcos..."
+                placeholder="e.g. Artificial Baits, Boats..."
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-teal-400 rounded-xl focus:ring-2 focus:ring-teal-500/20 outline-hidden bg-teal-50/20 min-h-[42px]"
@@ -180,20 +180,20 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
               <div className="flex items-center justify-between mb-1">
                 <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-1">
                   <Barcode className="w-3.5 h-3.5 text-teal-600" />
-                  <span>Código de Barras (FR06) *</span>
+                  <span>Barcode (FR06) *</span>
                 </label>
                 <button
                   type="button"
                   onClick={handleGenerateBarcode}
                   className="text-[11px] text-teal-600 hover:text-teal-700 font-bold flex items-center gap-0.5"
                 >
-                  <Sparkles className="w-3 h-3" /> Gerar Auto
+                  <Sparkles className="w-3 h-3" /> Auto Gen
                 </button>
               </div>
               <input
                 type="text"
                 required
-                placeholder="Ex: 7891001002014"
+                placeholder="e.g. 7891001002014"
                 value={barcode}
                 onChange={(e) => setBarcode(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-xs sm:text-sm font-mono border border-slate-300 rounded-xl focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-hidden tracking-wider min-h-[42px]"
@@ -204,7 +204,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
             <div>
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1 flex items-center gap-1">
                 <DollarSign className="w-3.5 h-3.5 text-teal-600" />
-                <span>Preço Registrado (FR07) *</span>
+                <span>Registered Price (FR07) *</span>
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-3 text-slate-400 font-semibold text-xs">$</span>
@@ -226,7 +226,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                Estoque Inicial
+                Initial Stock
               </label>
               <input
                 type="number"
@@ -238,11 +238,11 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
             </div>
             <div className="sm:col-span-2">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                Descrição Curta (Opcional)
+                Brief Description (Optional)
               </label>
               <input
                 type="text"
-                placeholder="Especificações, peso, material..."
+                placeholder="Specs, material, action..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500/20 outline-hidden min-h-[42px]"
@@ -257,14 +257,14 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
               onClick={onClose}
               className="px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors min-h-[42px]"
             >
-              Cancelar
+              Cancel
             </button>
             <button
               type="submit"
               className="px-5 py-2.5 text-xs sm:text-sm font-semibold bg-teal-600 text-white rounded-xl hover:bg-teal-700 shadow-md flex items-center gap-1.5 transition-colors min-h-[42px] active:scale-95"
             >
               <Check className="w-4 h-4" />
-              <span>Salvar no Catálogo</span>
+              <span>Save to Catalog</span>
             </button>
           </div>
         </form>

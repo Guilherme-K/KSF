@@ -27,8 +27,8 @@ export const DeleteItemDialog: React.FC<DeleteItemDialogProps> = ({
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900 text-sm sm:text-base">Excluir Item do Catálogo</h3>
-              <p className="text-[11px] sm:text-xs text-slate-500">Requisito FR05: O usuário pode excluir um item</p>
+              <h3 className="font-semibold text-slate-900 text-sm sm:text-base">Delete Item from Catalog</h3>
+              <p className="text-[11px] sm:text-xs text-slate-500">Requirement FR05: User can delete an item</p>
             </div>
             <button
               type="button"
@@ -41,25 +41,25 @@ export const DeleteItemDialog: React.FC<DeleteItemDialogProps> = ({
 
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3 sm:p-3.5 mb-4 space-y-1.5 text-xs">
             <div className="flex justify-between">
-              <span className="text-slate-500">Equipamento:</span>
+              <span className="text-slate-500">Equipment:</span>
               <span className="font-bold text-slate-800">{item.name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">Categoria:</span>
+              <span className="text-slate-500">Category:</span>
               <span className="font-semibold text-slate-800">{item.category}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">Código de Barras:</span>
+              <span className="text-slate-500">Barcode:</span>
               <span className="font-mono text-slate-800">{item.barcode}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">Preço Registrado:</span>
+              <span className="text-slate-500">Registered Price:</span>
               <span className="font-bold text-teal-700">{formatCurrency(item.price)}</span>
             </div>
           </div>
 
           <p className="text-xs text-slate-600 mb-5">
-            Tem certeza de que deseja remover este item? Ele deixará de aparecer para criação de novos pedidos.
+            Are you sure you want to remove this item? It will be deleted from the catalog across all categories.
           </p>
 
           <div className="flex items-center justify-end gap-2">
@@ -68,7 +68,7 @@ export const DeleteItemDialog: React.FC<DeleteItemDialogProps> = ({
               onClick={onClose}
               className="px-4 py-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors min-h-[40px]"
             >
-              Cancelar
+              Cancel
             </button>
             <button
               type="button"
@@ -79,7 +79,7 @@ export const DeleteItemDialog: React.FC<DeleteItemDialogProps> = ({
               className="px-4 py-2 text-xs sm:text-sm font-semibold bg-rose-600 text-white rounded-xl hover:bg-rose-700 shadow-md flex items-center gap-1.5 transition-colors min-h-[40px] active:scale-95"
             >
               <Trash2 className="w-4 h-4" />
-              <span>Confirmar Exclusão</span>
+              <span>Confirm Delete</span>
             </button>
           </div>
         </div>

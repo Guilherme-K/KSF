@@ -51,7 +51,7 @@ export function App() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  // Reload data from local storage (used on sync & initial load)
+  // Reload data from local storage
   const refreshData = useCallback(() => {
     setCategories(loadCategories());
     setItems(loadItems());
@@ -64,7 +64,7 @@ export function App() {
     const unsubscribe = subscribeToSync((syncType) => {
       refreshData();
       if (syncType === 'ORDERS') {
-        addToast('info', 'Pedidos Sincronizados', 'Dados atualizados recebidos de outro terminal aberto.');
+        addToast('info', 'Orders Synced', 'Updated order data received from another active terminal.');
       }
     });
     return unsubscribe;
@@ -77,8 +77,8 @@ export function App() {
       setOrders(updatedOrders);
       addToast(
         'success',
-        'Auto-Sincronização Concluída (FR19)',
-        `${count} pedido${count === 1 ? '' : 's'} pendente${count === 1 ? '' : 's'} registrado${count === 1 ? '' : 's'} no computador.`
+        'Auto-Sync Complete (FR19)',
+        `${count} pending order${count === 1 ? '' : 's'} registered on computer.`
       );
     }
   }, [addToast]);
@@ -92,14 +92,14 @@ export function App() {
     if (nextState) {
       addToast(
         'warning',
-        'Modo Offline Ativado (FR18)',
-        'Pedidos enviados agora ficarão como "Pending" até a conexão voltar.'
+        'Offline Mode Activated (FR18)',
+        'Orders submitted now will have status "Pending" until back online.'
       );
     } else {
       addToast(
         'success',
-        'Conexão Restaurada (FR19)',
-        'Online! Sincronizando automaticamente pedidos pendentes para o computador.'
+        'Connection Restored (FR19)',
+        'Online status active. Automatically dispatching pending orders to computer.'
       );
       setTimeout(() => {
         handlePerformSync();
@@ -107,14 +107,20 @@ export function App() {
     }
   };
 
-  // Change user role
+  // Change user role (Seller vs Manager)
   const handleUserRoleChange = (role: UserRole) => {
     setUserRole(role);
     saveUserRole(role);
+
+    // If switching to Seller while on Manager-only reports tab, switch to catalog
+    if (role === 'seller' && currentTab === 'reports') {
+      setCurrentTab('catalog');
+    }
+
     if (role === 'manager') {
-      addToast('info', 'Terminal do Gerente Ativo', 'Modo computador: Acesso a relatórios e catálogo.');
+      addToast('info', 'Manager Terminal Active', 'Computer desk mode: Accessing catalog management, reports, and orders.');
     } else {
-      addToast('info', 'Terminal do Vendedor Ativo', 'Modo celular: Registro de pedidos em campo.');
+      addToast('info', 'Seller Terminal Active', 'Field phone mode: Creating orders and browsing catalog.');
     }
   };
 
@@ -129,7 +135,7 @@ export function App() {
     const updated = [...items, newItem];
     setItems(updated);
     saveItems(updated);
-    addToast('success', 'Item Cadastrado (FR04)', `"${newItem.name}" adicionado com código ${newItem.barcode}.`);
+    addToast('success', 'Item Registered (FR04)', `"${newItem.name}" registered with barcode ${newItem.barcode}.`);
   };
 
   const handleDeleteItem = (itemId: string) => {
@@ -137,7 +143,7 @@ export function App() {
     const updated = items.filter((it) => it.id !== itemId);
     setItems(updated);
     saveItems(updated);
-    addToast('info', 'Item Removido (FR05)', target ? `"${target.name}" excluído do catálogo.` : undefined);
+    addToast('info', 'Item Removed (FR05)', target ? `"${target.name}" removed from catalog.` : undefined);
   };
 
   const handleAddCategory = (newCat: string) => {
@@ -145,7 +151,7 @@ export function App() {
       const updated = [...categories, newCat];
       setCategories(updated);
       saveCategories(updated);
-      addToast('success', 'Categoria Criada', `Categoria "${newCat}" adicionada.`);
+      addToast('success', 'Category Created', `Category "${newCat}" added.`);
     }
   };
 
@@ -163,8 +169,7 @@ export function App() {
           barcode: item.barcode,
           price: item.price,
         },
-        cur.quantity + 1,
-        cur.discounts
+        cur.quantity + 1
       );
       setDraftItems(updated);
     } else {
@@ -176,13 +181,12 @@ export function App() {
           barcode: item.barcode,
           price: item.price,
         },
-        1,
-        []
+        1
       );
       setDraftItems([...draftItems, newItem]);
     }
 
-    addToast('info', 'Item Adicionado', `"${item.name}" adicionado ao pedido.`);
+    addToast('info', 'Item Added to Order', `"${item.name}" added to draft.`);
   };
 
   // Save order handler
@@ -194,26 +198,26 @@ export function App() {
     if (newOrder.status === 'Order registered') {
       addToast(
         'success',
-        'Pedido Registrado! (FR17)',
-        `Pedido #${newOrder.orderNumber} para "${newOrder.customerName}" enviado ao computador.`
+        'Order Registered (FR17)',
+        `Order #${newOrder.orderNumber} for "${newOrder.customerName}" dispatched to computer.`
       );
     } else {
       addToast(
         'warning',
-        'Pedido Pendente (FR18)',
-        `Pedido #${newOrder.orderNumber} salvo offline. Será sincronizado ao reconectar.`
+        'Order Pending (FR18)',
+        `Order #${newOrder.orderNumber} saved offline. Will auto-register once connection returns.`
       );
     }
   };
 
   // Reset to default demo data
   const handleResetDemo = () => {
-    if (window.confirm('Deseja restaurar o catálogo e pedidos para os dados iniciais de demonstração?')) {
+    if (window.confirm('Reset catalog and orders back to default demo state?')) {
       resetDemoData();
       refreshData();
       setDraftItems([]);
       setDraftCustomerName('');
-      addToast('info', 'Dados Restaurados', 'Catálogo e pedidos retornaram ao estado padrão.');
+      addToast('info', 'Demo Data Restored', 'Catalog and orders restored to initial clean dataset.');
     }
   };
 
@@ -224,7 +228,7 @@ export function App() {
       {/* Toast Layer */}
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
 
-      {/* Main App Bar with dual mobile bottom nav and desktop top nav */}
+      {/* Main Navigation Bar */}
       <Navbar
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
@@ -250,6 +254,7 @@ export function App() {
             <CatalogView
               items={items}
               categories={categories}
+              userRole={userRole}
               onAddItem={handleAddItem}
               onDeleteItem={handleDeleteItem}
               onAddCategory={handleAddCategory}
@@ -279,7 +284,9 @@ export function App() {
             />
           )}
 
-          {currentTab === 'reports' && <SalesReportView orders={orders} />}
+          {currentTab === 'reports' && userRole === 'manager' && (
+            <SalesReportView orders={orders} />
+          )}
         </main>
       </DeviceFrame>
 
@@ -289,20 +296,20 @@ export function App() {
           <div className="flex items-center gap-2">
             <span className="font-semibold text-slate-700">AquaTackle CRM</span>
             <span className="text-slate-400">• Vercel Ready</span>
-            <span className="text-slate-400">• 100% Responsivo (Celular, Tablet e Desktop)</span>
-            <span className="text-slate-400">• Sincronização Offline (FR18/19, NFR05)</span>
+            <span className="text-slate-400">• Responsive (Mobile, Tablet & Desktop)</span>
+            <span className="text-slate-400">• Offline Sync (FR18/19, NFR05)</span>
           </div>
 
           <div className="flex items-center gap-3">
             <span>
-              Catálogo: <strong className="text-slate-700">{items.length} itens</strong>
+              Catalog: <strong className="text-slate-700">{items.length} items</strong>
             </span>
             <span>
-              Pedidos: <strong className="text-slate-700">{orders.length} pedidos</strong>
+              Orders: <strong className="text-slate-700">{orders.length} orders</strong>
             </span>
             {pendingCount > 0 && (
               <span className="text-amber-600 font-bold">
-                ({pendingCount} pendentes offline)
+                ({pendingCount} pending offline)
               </span>
             )}
           </div>
