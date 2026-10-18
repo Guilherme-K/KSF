@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import {
-  FileSpreadsheet,
   Calendar,
   Download,
   TrendingUp,
@@ -8,14 +7,11 @@ import {
   Package,
   Users,
   CheckCircle2,
-  Clock,
-  ChevronRight,
-  Filter,
   BarChart3,
   Layers,
 } from 'lucide-react';
 import { Order, SalesReportSummary } from '../../types';
-import { formatCurrency, formatShortDate, formatDate } from '../../utils/discounts';
+import { formatCurrency, formatShortDate } from '../../utils/discounts';
 import { generateSalesReportPDF } from '../../utils/pdfGenerator';
 
 interface SalesReportViewProps {
@@ -30,7 +26,6 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
 
   // Compute summary for the chosen period (FR22)
   const summary: SalesReportSummary = useMemo(() => {
-    // Normalize date strings for comparison
     const startObj = new Date(`${startDate}T00:00:00Z`);
     const endObj = new Date(`${endDate}T23:59:59Z`);
 
@@ -54,14 +49,12 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
       if (ord.status === 'Order registered') registeredCount++;
       if (ord.status === 'Pending') pendingCount++;
 
-      // Customer breakdown
       if (!customerMap[ord.customerName]) {
         customerMap[ord.customerName] = { count: 0, total: 0 };
       }
       customerMap[ord.customerName].count += 1;
       customerMap[ord.customerName].total += ord.totalPrice;
 
-      // Item & Category breakdown
       for (const item of ord.items) {
         if (!itemMap[item.name]) {
           itemMap[item.name] = {
@@ -113,7 +106,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
       totalSalesCount > 0 ? Math.round((totalRevenue / totalSalesCount) * 100) / 100 : 0;
 
     return {
-      periodLabel: `${formatShortDate(startDate)} to ${formatShortDate(endDate)}`,
+      periodLabel: `${formatShortDate(startDate)} até ${formatShortDate(endDate)}`,
       startDate,
       endDate,
       totalSalesCount,
@@ -133,10 +126,6 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
     if (preset === '07-10-demo') {
       setStartDate('2026-07-10');
       setEndDate('2026-07-31');
-    } else if (preset === 'today') {
-      const todayStr = '2026-07-18';
-      setStartDate(todayStr);
-      setEndDate(todayStr);
     } else if (preset === 'week') {
       setStartDate('2026-07-10');
       setEndDate('2026-07-17');
@@ -147,50 +136,50 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Page Title & Manager Identity Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+    <div className="space-y-4 sm:space-y-6 pb-20 md:pb-6">
+      {/* Title & Manager Identity Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-              Manager Sales Reports
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight">
+              Relatório de Vendas
             </h1>
-            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
-              Computer Terminal (FR20)
+            <span className="px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+              Terminal do Gerente (FR20)
             </span>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Generate period-based sales analytics, revenue figures, and export audit PDFs (FR20, FR21, FR22).
+            Geração de relatórios por período com faturamento e exportação em PDF (FR20, FR21, FR22).
           </p>
         </div>
 
         <button
           type="button"
           onClick={() => generateSalesReportPDF(summary)}
-          className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-semibold shadow-md shadow-slate-900/20 flex items-center justify-center gap-2 transition-all active:scale-95"
+          className="w-full sm:w-auto px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 min-h-[44px]"
         >
           <Download className="w-4 h-4" />
-          <span>Export Report to PDF</span>
+          <span>Exportar Relatório em PDF</span>
         </button>
       </div>
 
-      {/* Date Period Chooser (FR21: Manager chooses time period, e.g. starting on 07/10) */}
-      <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+      {/* Date Period Chooser (FR21) */}
+      <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3 sm:space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
             <Calendar className="w-4 h-4 text-indigo-600" />
-            <span>Choose Time Period for Report (FR21)</span>
+            <span>Período do Relatório (FR21: Ex. a partir de 10/07)</span>
           </label>
-          <span className="text-xs text-slate-400">
-            Requirement FR22: Shows how many sales were made in the period, even if generated later
+          <span className="text-[11px] text-slate-400">
+            FR22: Mostra vendas do período mesmo gerado posteriormente
           </span>
         </div>
 
-        {/* Date Inputs & Quick Presets */}
+        {/* Inputs & Presets */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div>
             <label className="block text-[11px] font-semibold text-slate-500 mb-1">
-              Start Date (e.g. 07/10) *
+              Data Inicial *
             </label>
             <input
               type="date"
@@ -199,13 +188,13 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
                 setStartDate(e.target.value);
                 setActivePreset('custom');
               }}
-              className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-hidden bg-slate-50/50"
+              className="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-hidden bg-slate-50/50 min-h-[44px]"
             />
           </div>
 
           <div>
             <label className="block text-[11px] font-semibold text-slate-500 mb-1">
-              End Date *
+              Data Final *
             </label>
             <input
               type="date"
@@ -214,48 +203,48 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
                 setEndDate(e.target.value);
                 setActivePreset('custom');
               }}
-              className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-hidden bg-slate-50/50"
+              className="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-hidden bg-slate-50/50 min-h-[44px]"
             />
           </div>
 
           <div className="sm:col-span-2 flex flex-col justify-end">
             <div className="flex flex-wrap items-center gap-1.5 pt-1 sm:pt-0">
-              <span className="text-xs text-slate-400 mr-1">Period Presets:</span>
+              <span className="text-[11px] text-slate-400 mr-1">Atalhos:</span>
               <button
                 type="button"
                 onClick={() => handleApplyPreset('07-10-demo')}
-                className={`px-3 py-2 text-xs font-bold rounded-xl border transition-all ${
+                className={`px-3 py-2 text-xs font-bold rounded-xl border transition-all min-h-[38px] ${
                   activePreset === '07-10-demo'
                     ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
                     : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border-indigo-200'
                 }`}
-                title="Loads sample period starting on 07/10 as requested in FR21"
+                title="Carrega o período a partir de 10/07 como solicitado no FR21"
               >
-                ★ Starting 07/10 (FR21 Demo)
+                ★ A partir de 10/07 (FR21)
               </button>
 
               <button
                 type="button"
                 onClick={() => handleApplyPreset('week')}
-                className={`px-3 py-2 text-xs font-semibold rounded-xl border transition-all ${
+                className={`px-3 py-2 text-xs font-semibold rounded-xl border transition-all min-h-[38px] ${
                   activePreset === 'week'
                     ? 'bg-indigo-600 text-white border-indigo-600'
                     : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
                 }`}
               >
-                07/10 - 07/17
+                10/07 a 17/07
               </button>
 
               <button
                 type="button"
                 onClick={() => handleApplyPreset('all')}
-                className={`px-3 py-2 text-xs font-semibold rounded-xl border transition-all ${
+                className={`px-3 py-2 text-xs font-semibold rounded-xl border transition-all min-h-[38px] ${
                   activePreset === 'all'
                     ? 'bg-indigo-600 text-white border-indigo-600'
                     : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
                 }`}
               >
-                All Records
+                Todo Histórico
               </button>
             </div>
           </div>
@@ -263,88 +252,88 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
       </div>
 
       {/* KPI Summary Cards (FR22) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        {/* Card 1: Total Sales Count */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Total Sales (FR22)</span>
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-              <TrendingUp className="w-4 h-4" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+        {/* Total Sales Count */}
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div className="flex items-center justify-between text-slate-400 mb-1 sm:mb-2">
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider">Vendas (FR22)</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <div className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             {summary.totalSalesCount}
           </div>
-          <span className="text-xs text-slate-500 mt-1 block">
-            Orders made in chosen period
+          <span className="text-[10px] sm:text-xs text-slate-500 mt-0.5 block">
+            Pedidos no período
           </span>
         </div>
 
-        {/* Card 2: Total Revenue */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Total Revenue</span>
-            <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
-              <DollarSign className="w-4 h-4" />
+        {/* Total Revenue */}
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div className="flex items-center justify-between text-slate-400 mb-1 sm:mb-2">
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider">Faturamento</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
+              <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-teal-700 tracking-tight">
+          <div className="text-lg sm:text-2xl lg:text-3xl font-extrabold text-teal-700 tracking-tight truncate">
             {formatCurrency(summary.totalRevenue)}
           </div>
-          <span className="text-xs text-teal-600/80 mt-1 block font-medium">
-            Net commercial volume
+          <span className="text-[10px] sm:text-xs text-teal-600/80 mt-0.5 block font-medium">
+            Receita líquida
           </span>
         </div>
 
-        {/* Card 3: Average Order Value */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Avg Order Value</span>
-            <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
-              <BarChart3 className="w-4 h-4" />
+        {/* Avg Ticket */}
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div className="flex items-center justify-between text-slate-400 mb-1 sm:mb-2">
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider">Ticket Médio</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
+              <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <div className="text-lg sm:text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight truncate">
             {formatCurrency(summary.averageOrderValue)}
           </div>
-          <span className="text-xs text-slate-500 mt-1 block">
-            Average ticket per store
+          <span className="text-[10px] sm:text-xs text-slate-500 mt-0.5 block">
+            Média por pedido
           </span>
         </div>
 
-        {/* Card 4: Registered vs Pending */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Registration Status</span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-              <CheckCircle2 className="w-4 h-4" />
+        {/* Registered vs Pending */}
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div className="flex items-center justify-between text-slate-400 mb-1 sm:mb-2">
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider">Sincronização</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+          <div className="text-base sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-1.5">
             <span className="text-emerald-600">{summary.registeredCount} Reg</span>
             <span className="text-slate-300">/</span>
             <span className="text-amber-600">{summary.pendingCount} Pend</span>
           </div>
-          <span className="text-xs text-slate-500 mt-1 block">
-            Synchronized to computer
+          <span className="text-[10px] sm:text-xs text-slate-500 mt-0.5 block">
+            No computador
           </span>
         </div>
       </div>
 
       {/* Category Breakdown & Customer Leaderboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Category Revenue Breakdown */}
-        <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {/* Category Revenue */}
+        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
+            <h3 className="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
               <Layers className="w-4 h-4 text-teal-600" />
-              <span>Revenue by Fishing Category</span>
+              <span>Receita por Categoria de Pesca</span>
             </h3>
-            <span className="text-xs text-slate-400">{summary.categoryBreakdown.length} categories</span>
+            <span className="text-xs text-slate-400">{summary.categoryBreakdown.length} categorias</span>
           </div>
 
           {summary.categoryBreakdown.length === 0 ? (
-            <p className="text-xs text-slate-400 italic py-4">No category sales in this period.</p>
+            <p className="text-xs text-slate-400 italic py-4">Sem vendas no período.</p>
           ) : (
             <div className="space-y-3 pt-1">
               {summary.categoryBreakdown.map((cat) => {
@@ -358,7 +347,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
                     <div className="flex justify-between text-xs font-semibold">
                       <span className="text-slate-800">{cat.category}</span>
                       <span className="text-slate-600">
-                        {formatCurrency(cat.totalRevenue)} ({percent}%) • {cat.quantitySold} units
+                        {formatCurrency(cat.totalRevenue)} ({percent}%) • {cat.quantitySold} un
                       </span>
                     </div>
                     <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -375,17 +364,17 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
         </div>
 
         {/* Customer Breakdown */}
-        <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
+            <h3 className="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
               <Users className="w-4 h-4 text-indigo-600" />
-              <span>Sales Volume by Store / Customer</span>
+              <span>Vendas por Loja / Cliente</span>
             </h3>
-            <span className="text-xs text-slate-400">{summary.customerBreakdown.length} stores</span>
+            <span className="text-xs text-slate-400">{summary.customerBreakdown.length} clientes</span>
           </div>
 
           {summary.customerBreakdown.length === 0 ? (
-            <p className="text-xs text-slate-400 italic py-4">No customer sales in this period.</p>
+            <p className="text-xs text-slate-400 italic py-4">Sem vendas no período.</p>
           ) : (
             <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden">
               {summary.customerBreakdown.map((cust, idx) => (
@@ -404,7 +393,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
                       {formatCurrency(cust.totalSpent)}
                     </span>
                     <span className="text-[10px] text-slate-400">
-                      {cust.orderCount} {cust.orderCount === 1 ? 'order' : 'orders'}
+                      {cust.orderCount} {cust.orderCount === 1 ? 'pedido' : 'pedidos'}
                     </span>
                   </div>
                 </div>
@@ -416,30 +405,28 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
 
       {/* Best Selling Items in Period Table */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-        <div className="bg-slate-50 px-4 sm:px-6 py-3.5 border-b border-slate-200 flex items-center justify-between">
-          <h3 className="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+        <div className="bg-slate-50 px-4 sm:px-6 py-3 border-b border-slate-200 flex items-center justify-between">
+          <h3 className="font-bold text-slate-800 text-xs sm:text-base flex items-center gap-2">
             <Package className="w-4 h-4 text-teal-600" />
-            <span>Best Selling Fishing Gear in Period</span>
+            <span>Equipamentos Mais Vendidos no Período</span>
           </h3>
-          <span className="text-xs text-slate-400 font-medium">
-            Ranked by units sold & revenue
-          </span>
+          <span className="text-[11px] text-slate-400">Classificados por volume</span>
         </div>
 
         {summary.topItems.length === 0 ? (
           <div className="p-8 text-center text-slate-400 text-xs">
-            No items were sold during the selected period.
+            Nenhum item vendido no período selecionado.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto scrollbar-thin">
+            <table className="w-full text-left text-xs min-w-[500px]">
               <thead className="bg-slate-100/70 text-slate-600 font-semibold uppercase tracking-wider text-[10px]">
                 <tr>
-                  <th className="py-2.5 px-4">Item Name</th>
-                  <th className="py-2.5 px-4">Category</th>
-                  <th className="py-2.5 px-4">Barcode</th>
-                  <th className="py-2.5 px-4 text-center">Units Sold</th>
-                  <th className="py-2.5 px-4 text-right">Revenue</th>
+                  <th className="py-2.5 px-4">Item</th>
+                  <th className="py-2.5 px-4">Categoria</th>
+                  <th className="py-2.5 px-4">Código</th>
+                  <th className="py-2.5 px-4 text-center">Unidades</th>
+                  <th className="py-2.5 px-4 text-right">Faturamento</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -466,27 +453,27 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
         )}
       </div>
 
-      {/* Orders matching period (FR22 audit list) */}
+      {/* Orders in Period List (FR22) */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-        <div className="bg-slate-50 px-4 sm:px-6 py-3.5 border-b border-slate-200 flex items-center justify-between">
-          <h3 className="font-bold text-slate-800 text-sm sm:text-base">
-            Detailed Orders in Period ({summary.orders.length})
+        <div className="bg-slate-50 px-4 sm:px-6 py-3 border-b border-slate-200 flex items-center justify-between">
+          <h3 className="font-bold text-slate-800 text-xs sm:text-base">
+            Lista de Pedidos no Período ({summary.orders.length})
           </h3>
-          <span className="text-xs text-slate-400">
+          <span className="text-[11px] text-slate-400">
             {formatShortDate(startDate)} → {formatShortDate(endDate)}
           </span>
         </div>
 
         {summary.orders.length === 0 ? (
           <div className="p-8 text-center text-slate-400 text-xs">
-            No orders found within this date range.
+            Nenhum pedido encontrado neste intervalo de datas.
           </div>
         ) : (
           <div className="divide-y divide-slate-100">
             {summary.orders.map((ord) => (
               <div
                 key={ord.id}
-                className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs hover:bg-slate-50/50"
+                className="p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs hover:bg-slate-50/50"
               >
                 <div>
                   <div className="flex items-center gap-2">
@@ -503,7 +490,7 @@ export const SalesReportView: React.FC<SalesReportViewProps> = ({ orders }) => {
                     </span>
                   </div>
                   <div className="text-slate-600 mt-0.5">
-                    Customer: <strong>{ord.customerName}</strong> ({ord.items.length} items)
+                    Cliente: <strong>{ord.customerName}</strong> ({ord.items.length} itens)
                   </div>
                 </div>
 

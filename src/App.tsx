@@ -17,7 +17,7 @@ import {
 } from './utils/storage';
 import { buildOrderItem } from './utils/discounts';
 import { Navbar } from './components/common/Navbar';
-import { DeviceFrame } from './components/common/DeviceFrame';
+import { DeviceFrame, ViewMode } from './components/common/DeviceFrame';
 import { ToastContainer, ToastMessage } from './components/common/Toast';
 import { CatalogView } from './components/catalog/CatalogView';
 import { CreateOrderView } from './components/orders/CreateOrderView';
@@ -28,7 +28,7 @@ export function App() {
   const [currentTab, setCurrentTab] = useState<'catalog' | 'create-order' | 'orders' | 'reports'>('catalog');
   const [userRole, setUserRole] = useState<UserRole>(loadUserRole);
   const [isOffline, setIsOffline] = useState<boolean>(loadSimulatedOffline);
-  const [viewMode, setViewMode] = useState<'desktop' | 'phone'>('desktop');
+  const [viewMode, setViewMode] = useState<ViewMode>('desktop');
 
   // Core Data
   const [categories, setCategories] = useState<string[]>(loadCategories);
@@ -64,7 +64,7 @@ export function App() {
     const unsubscribe = subscribeToSync((syncType) => {
       refreshData();
       if (syncType === 'ORDERS') {
-        addToast('info', 'Orders Synced', 'Received updated order data from another active terminal.');
+        addToast('info', 'Pedidos Sincronizados', 'Dados atualizados recebidos de outro terminal aberto.');
       }
     });
     return unsubscribe;
@@ -77,8 +77,8 @@ export function App() {
       setOrders(updatedOrders);
       addToast(
         'success',
-        'Auto-Sync Complete! (FR19)',
-        `${count} pending order${count === 1 ? '' : 's'} registered on computer.`
+        'Auto-Sincronização Concluída (FR19)',
+        `${count} pedido${count === 1 ? '' : 's'} pendente${count === 1 ? '' : 's'} registrado${count === 1 ? '' : 's'} no computador.`
       );
     }
   }, [addToast]);
@@ -92,16 +92,15 @@ export function App() {
     if (nextState) {
       addToast(
         'warning',
-        'Simulating Offline Mode (FR18)',
-        'Orders submitted now will have status "Pending" until online.'
+        'Modo Offline Ativado (FR18)',
+        'Pedidos enviados agora ficarão como "Pending" até a conexão voltar.'
       );
     } else {
       addToast(
         'success',
-        'Connection Restored (FR19)',
-        'Online status active. Triggering automatic pending order dispatch.'
+        'Conexão Restaurada (FR19)',
+        'Online! Sincronizando automaticamente pedidos pendentes para o computador.'
       );
-      // Auto sync pending orders
       setTimeout(() => {
         handlePerformSync();
       }, 500);
@@ -113,9 +112,9 @@ export function App() {
     setUserRole(role);
     saveUserRole(role);
     if (role === 'manager') {
-      addToast('info', 'Manager Terminal Active', 'Computer desk mode: Accessing sales reports and catalog.');
+      addToast('info', 'Terminal do Gerente Ativo', 'Modo computador: Acesso a relatórios e catálogo.');
     } else {
-      addToast('info', 'Seller Terminal Active', 'Mobile phone mode: Ready to visit stores and take orders.');
+      addToast('info', 'Terminal do Vendedor Ativo', 'Modo celular: Registro de pedidos em campo.');
     }
   };
 
@@ -130,7 +129,7 @@ export function App() {
     const updated = [...items, newItem];
     setItems(updated);
     saveItems(updated);
-    addToast('success', 'Item Registered (FR04)', `"${newItem.name}" added with barcode ${newItem.barcode}.`);
+    addToast('success', 'Item Cadastrado (FR04)', `"${newItem.name}" adicionado com código ${newItem.barcode}.`);
   };
 
   const handleDeleteItem = (itemId: string) => {
@@ -138,7 +137,7 @@ export function App() {
     const updated = items.filter((it) => it.id !== itemId);
     setItems(updated);
     saveItems(updated);
-    addToast('info', 'Item Removed (FR05)', target ? `"${target.name}" removed from catalog.` : undefined);
+    addToast('info', 'Item Removido (FR05)', target ? `"${target.name}" excluído do catálogo.` : undefined);
   };
 
   const handleAddCategory = (newCat: string) => {
@@ -146,13 +145,12 @@ export function App() {
       const updated = [...categories, newCat];
       setCategories(updated);
       saveCategories(updated);
-      addToast('success', 'Category Created', `Category "${newCat}" added.`);
+      addToast('success', 'Categoria Criada', `Categoria "${newCat}" adicionada.`);
     }
   };
 
   // Quick Add from Catalog to Order
   const handleQuickAddToOrder = (item: FishingItem) => {
-    // Check if already in draft
     const existingIndex = draftItems.findIndex((d) => d.itemId === item.id);
     if (existingIndex >= 0) {
       const updated = [...draftItems];
@@ -184,7 +182,7 @@ export function App() {
       setDraftItems([...draftItems, newItem]);
     }
 
-    addToast('info', 'Added to Draft Order', `"${item.name}" added with quantity 1.`);
+    addToast('info', 'Item Adicionado', `"${item.name}" adicionado ao pedido.`);
   };
 
   // Save order handler
@@ -196,26 +194,26 @@ export function App() {
     if (newOrder.status === 'Order registered') {
       addToast(
         'success',
-        'Order Registered! (FR17)',
-        `Order #${newOrder.orderNumber} for "${newOrder.customerName}" sent to computer.`
+        'Pedido Registrado! (FR17)',
+        `Pedido #${newOrder.orderNumber} para "${newOrder.customerName}" enviado ao computador.`
       );
     } else {
       addToast(
         'warning',
-        'Order Pending (FR18)',
-        `Order #${newOrder.orderNumber} saved offline. Will auto-register once online.`
+        'Pedido Pendente (FR18)',
+        `Pedido #${newOrder.orderNumber} salvo offline. Será sincronizado ao reconectar.`
       );
     }
   };
 
   // Reset to default demo data
   const handleResetDemo = () => {
-    if (window.confirm('Reset catalog items and orders back to default demo state?')) {
+    if (window.confirm('Deseja restaurar o catálogo e pedidos para os dados iniciais de demonstração?')) {
       resetDemoData();
       refreshData();
       setDraftItems([]);
       setDraftCustomerName('');
-      addToast('info', 'Demo Data Restored', 'Catalog, sample orders, and categories reset.');
+      addToast('info', 'Dados Restaurados', 'Catálogo e pedidos retornaram ao estado padrão.');
     }
   };
 
@@ -223,10 +221,10 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col text-slate-900 selection:bg-teal-500 selection:text-white">
-      {/* Toast Notification Layer */}
+      {/* Toast Layer */}
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
 
-      {/* Main App Bar */}
+      {/* Main App Bar with dual mobile bottom nav and desktop top nav */}
       <Navbar
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
@@ -235,18 +233,19 @@ export function App() {
         isOffline={isOffline}
         onToggleOffline={handleToggleOffline}
         pendingCount={pendingCount}
+        draftCount={draftItems.length}
         viewMode={viewMode}
         onChangeViewMode={setViewMode}
         onResetData={handleResetDemo}
       />
 
-      {/* Device Frame Wrapper (supports Phone simulation or Full Desktop) */}
+      {/* Device Frame Wrapper (full responsive, tablet, or phone frame) */}
       <DeviceFrame
         mode={viewMode}
-        onToggleMode={() => setViewMode(viewMode === 'desktop' ? 'phone' : 'desktop')}
+        onSelectMode={setViewMode}
         isOffline={isOffline}
       >
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
+        <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 w-full">
           {currentTab === 'catalog' && (
             <CatalogView
               items={items}
@@ -284,26 +283,26 @@ export function App() {
         </main>
       </DeviceFrame>
 
-      {/* Sticky Bottom Ribbon on Desktop: quick stats & requirements reminder */}
-      <footer className="mt-auto bg-white border-t border-slate-200 py-3 px-4 text-xs text-slate-500">
+      {/* Desktop Footer Info */}
+      <footer className="hidden md:block mt-auto bg-white border-t border-slate-200 py-3 px-4 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-slate-700">AquaTackle Fishing CRM Prototype</span>
+            <span className="font-semibold text-slate-700">AquaTackle CRM</span>
             <span className="text-slate-400">• Vercel Ready</span>
-            <span className="text-slate-400">• Multi-device (NFR01)</span>
-            <span className="text-slate-400">• Offline Sync (FR18/19, NFR05)</span>
+            <span className="text-slate-400">• 100% Responsivo (Celular, Tablet e Desktop)</span>
+            <span className="text-slate-400">• Sincronização Offline (FR18/19, NFR05)</span>
           </div>
 
           <div className="flex items-center gap-3">
             <span>
-              Catalog: <strong className="text-slate-700">{items.length} items</strong>
+              Catálogo: <strong className="text-slate-700">{items.length} itens</strong>
             </span>
             <span>
-              Orders: <strong className="text-slate-700">{orders.length} orders</strong>
+              Pedidos: <strong className="text-slate-700">{orders.length} pedidos</strong>
             </span>
             {pendingCount > 0 && (
               <span className="text-amber-600 font-bold">
-                ({pendingCount} pending offline)
+                ({pendingCount} pendentes offline)
               </span>
             )}
           </div>

@@ -3,6 +3,7 @@
 @layer base {
   * {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
   }
   body {
     margin: 0;
@@ -12,13 +13,19 @@
     background-color: #f8fafc;
     color: #0f172a;
     min-height: 100vh;
+    overflow-x: hidden;
   }
+}
+
+/* iOS Safe Area Padding */
+.safe-area-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
 }
 
 /* Custom scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {

@@ -5,7 +5,6 @@ import {
   Download,
   Eye,
   Search,
-  Filter,
   RefreshCw,
   ShoppingBag,
   Plus,
@@ -61,42 +60,42 @@ export const OrdersListView: React.FC<OrdersListViewProps> = ({
   const registeredCount = orders.filter((o) => o.status === 'Order registered').length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 pb-20 md:pb-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-              Commercial Orders History
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight">
+              Histórico de Pedidos
             </h1>
-            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200">
-              {orders.length} total orders
+            <span className="px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200">
+              {orders.length} pedidos no total
             </span>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Tracking sent orders, offline pending sync queue, and printable PDF documents.
+            Acompanhe pedidos registrados, fila pendente offline e emissão de PDFs (FR16-FR19).
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           {!isOffline && pendingCount > 0 && (
             <button
               type="button"
               onClick={onSyncPending}
-              className="px-3.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold text-xs flex items-center gap-1.5 shadow-md shadow-amber-500/20 transition-all active:scale-95"
+              className="px-3.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 font-semibold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20 transition-all active:scale-95 min-h-[44px]"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span>Sync {pendingCount} Pending (FR19)</span>
+              <span>Sincronizar {pendingCount} Pendentes (FR19)</span>
             </button>
           )}
 
           <button
             type="button"
             onClick={onCreateNewOrder}
-            className="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-sm font-semibold shadow-sm shadow-teal-600/20 flex items-center gap-2 transition-all active:scale-95"
+            className="w-full sm:w-auto px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-sm shadow-teal-600/20 flex items-center justify-center gap-2 transition-all active:scale-95 min-h-[44px]"
           >
             <Plus className="w-4 h-4" />
-            <span>New Order (FR08)</span>
+            <span>Novo Pedido (FR08)</span>
           </button>
         </div>
       </div>
@@ -104,10 +103,10 @@ export const OrdersListView: React.FC<OrdersListViewProps> = ({
       {/* Sync Status Banner when Pending Orders Exist */}
       {pendingCount > 0 && (
         <div
-          className={`p-4 rounded-2xl border flex items-center justify-between gap-3 text-xs sm:text-sm ${
+          className={`p-3.5 sm:p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-sm ${
             isOffline
-              ? 'bg-amber-50/80 border-amber-200 text-amber-900'
-              : 'bg-teal-50/80 border-teal-200 text-teal-900'
+              ? 'bg-amber-50/90 border-amber-200 text-amber-900'
+              : 'bg-teal-50/90 border-teal-200 text-teal-900'
           }`}
         >
           <div className="flex items-center gap-2.5">
@@ -118,12 +117,12 @@ export const OrdersListView: React.FC<OrdersListViewProps> = ({
             )}
             <div>
               <p className="font-bold">
-                {pendingCount} order{pendingCount === 1 ? '' : 's'} waiting with status "Pending" (FR16/FR18)
+                {pendingCount} pedido{pendingCount === 1 ? '' : 's'} aguardando com status "Pending" (FR16/FR18)
               </p>
-              <p className="text-xs opacity-80">
+              <p className="text-[11px] sm:text-xs opacity-80">
                 {isOffline
-                  ? 'Currently offline. When internet is back, the pending orders will be automatically sent to the computer (FR19).'
-                  : 'Internet is back online! Click "Sync Now" or toggle network to finalize registration.'}
+                  ? 'Atualmente offline. Quando a internet voltar, os pedidos serão enviados automaticamente (FR19).'
+                  : 'A internet voltou! Clique em sincronizar ou alterne o status para registrar no computador.'}
               </p>
             </div>
           </div>
@@ -132,95 +131,95 @@ export const OrdersListView: React.FC<OrdersListViewProps> = ({
             <button
               type="button"
               onClick={onSyncPending}
-              className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg text-xs shrink-0"
+              className="px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs shrink-0 self-end sm:self-center"
             >
-              Sync Now
+              Sincronizar Agora
             </button>
           )}
         </div>
       )}
 
       {/* Search and Status Filters */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3.5">
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
         <div className="relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
           <input
             type="text"
-            placeholder="Search orders by customer name, order #, or item name..."
+            placeholder="Buscar por cliente, número do pedido ou item..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-sm border border-slate-300 rounded-xl focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-hidden bg-slate-50/50 focus:bg-white"
+            className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-hidden bg-slate-50/50 focus:bg-white min-h-[44px]"
           />
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scrollbar-thin -mx-1 px-1">
           <button
             type="button"
             onClick={() => setStatusFilter('ALL')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all min-h-[36px] ${
               statusFilter === 'ALL'
                 ? 'bg-slate-900 text-white'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            All Orders ({orders.length})
+            Todos ({orders.length})
           </button>
 
           <button
             type="button"
             onClick={() => setStatusFilter('Order registered')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 min-h-[36px] ${
               statusFilter === 'Order registered'
                 ? 'bg-emerald-600 text-white'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Order Registered ({registeredCount})</span>
+            <span>Registrados ({registeredCount})</span>
           </button>
 
           <button
             type="button"
             onClick={() => setStatusFilter('Pending')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 min-h-[36px] ${
               statusFilter === 'Pending'
                 ? 'bg-amber-600 text-white'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
-            <span>Pending ({pendingCount})</span>
+            <span>Pendentes ({pendingCount})</span>
           </button>
         </div>
       </div>
 
       {/* Orders List / Cards */}
       {filteredOrders.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+        <div className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 text-center">
           <ShoppingBag className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-          <h3 className="font-semibold text-slate-800 text-base">No orders match filter</h3>
+          <h3 className="font-semibold text-slate-800 text-sm sm:text-base">Nenhum pedido encontrado</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            Try adjusting your search query or status filter to see other orders.
+            Tente mudar o filtro de status ou a busca para visualizar outros pedidos.
           </p>
         </div>
       ) : (
-        <div className="space-y-3.5">
+        <div className="space-y-3 sm:space-y-3.5">
           {filteredOrders.map((order) => {
             const isRegistered = order.status === 'Order registered';
             return (
               <div
                 key={order.id}
-                className="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-5 hover:border-slate-300 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
+                className="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-5 hover:border-slate-300 transition-all flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4"
               >
                 {/* Left: Info */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <span className="font-mono text-xs font-bold text-slate-500">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-mono text-[11px] sm:text-xs font-bold text-slate-500">
                       {order.orderNumber}
                     </span>
                     <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider ${
                         isRegistered
                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                           : 'bg-amber-50 text-amber-700 border border-amber-200'
@@ -233,17 +232,16 @@ export const OrdersListView: React.FC<OrdersListViewProps> = ({
                       )}
                       <span>{order.status}</span>
                     </span>
-                    <span className="text-xs text-slate-400">• {formatDate(order.createdAt)}</span>
+                    <span className="text-[11px] sm:text-xs text-slate-400">• {formatDate(order.createdAt)}</span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-slate-900 mt-1">
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 mt-1">
                     {order.customerName}
                   </h3>
 
-                  {/* Items summary */}
-                  <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 flex-wrap">
+                  <div className="flex items-center gap-1.5 mt-1 text-xs text-slate-500 flex-wrap">
                     <span>
-                      {order.items.length} {order.items.length === 1 ? 'line item' : 'line items'}:
+                      {order.items.length} {order.items.length === 1 ? 'item' : 'itens'}:
                     </span>
                     <span className="text-slate-700 font-medium">
                       {order.items.map((it) => `${it.quantity}x ${it.name}`).join(', ')}
@@ -251,13 +249,13 @@ export const OrdersListView: React.FC<OrdersListViewProps> = ({
                   </div>
                 </div>
 
-                {/* Right: Price & Action Buttons */}
-                <div className="flex items-center justify-between md:justify-end gap-4 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
+                {/* Right: Price & Touch Action Buttons */}
+                <div className="flex items-center justify-between md:justify-end gap-3 sm:gap-4 shrink-0 pt-2.5 md:pt-0 border-t md:border-t-0 border-slate-100">
                   <div className="text-left md:text-right">
-                    <span className="text-[10px] font-semibold uppercase text-slate-400 block">
-                      Net Total (FR16)
+                    <span className="text-[9px] uppercase text-slate-400 block font-semibold">
+                      Total (FR16)
                     </span>
-                    <span className="text-xl font-extrabold text-teal-700 tracking-tight">
+                    <span className="text-lg sm:text-xl font-extrabold text-teal-700 tracking-tight">
                       {formatCurrency(order.totalPrice)}
                     </span>
                   </div>
@@ -266,18 +264,18 @@ export const OrdersListView: React.FC<OrdersListViewProps> = ({
                     <button
                       type="button"
                       onClick={() => setSelectedOrder(order)}
-                      className="p-2 sm:px-3 sm:py-2 text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors"
-                      title="View order details"
+                      className="px-3 py-2 text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors min-h-[40px]"
+                      title="Ver detalhes do pedido"
                     >
                       <Eye className="w-4 h-4" />
-                      <span className="hidden sm:inline">Details</span>
+                      <span>Detalhes</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => generateOrderPDF(order)}
-                      className="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors"
-                      title="Download PDF with all order information (FR18)"
+                      className="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors min-h-[40px]"
+                      title="Baixar PDF com todas as informações (FR18)"
                     >
                       <Download className="w-4 h-4" />
                       <span>PDF (FR18)</span>
