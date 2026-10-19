@@ -186,7 +186,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-sm sm:text-base tracking-tight text-white">AquaTackle</span>
+                  <span className="font-bold text-sm sm:text-base tracking-tight text-white">KSF</span>
                   <span className="px-1.5 py-0.2 rounded text-[9px] font-bold uppercase tracking-wider bg-teal-500/20 text-teal-300 border border-teal-500/30">
                     CRM
                   </span>
