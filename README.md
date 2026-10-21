@@ -1,4 +1,4 @@
-# 🎣 AquaTackle CRM — Visual Prototype
+# 🎣 ksf CRM — Visual Prototype
 
 A modern visual prototype for a specialized Fishing Equipment CRM and Sales & Order Management system, designed for **2 key users: Seller and Manager**, with multi-device responsive support (Mobile, Tablet, Desktop), barcode catalog, offline order dispatch with auto-synchronization, and date-filtered sales reporting.
 
